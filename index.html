@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#5a2b8a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="מתי עשיתי?">
+  <link rel="apple-touch-icon" href="icon-180.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <title>מתי עשיתי את זה?!</title>
+  <style>
+    :root{
+      --bg:#fffaf7;--card:#fff;--ink:#2f2440;--muted:#81788b;--primary:#5a2b8a;
+      --primary2:#7040a8;--line:#eadfe8;--danger:#c84f62;--success:#24844e;
+      --shadow:0 8px 28px rgba(65,38,74,.10);--r:20px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,#fffaf7,#fff);color:var(--ink);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;min-height:100vh}
+    button,input,select,textarea{font:inherit}
+    button{cursor:pointer}
+    .app{max-width:760px;margin:auto;padding:calc(18px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom))}
+    .top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+    .brand{display:flex;align-items:center;gap:10px}
+    .brand img{width:54px;height:54px;border-radius:15px;box-shadow:0 5px 16px rgba(73,42,88,.16)}
+    h1{font-size:25px;margin:0;color:#3f2168;line-height:1.1}
+    .dots{width:42px;height:42px;border:0;background:#fff;border-radius:14px;color:var(--primary);font-size:24px;box-shadow:var(--shadow)}
+    .menu{position:absolute;left:14px;top:78px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:8px;box-shadow:var(--shadow);z-index:20;min-width:180px}
+    .menu button{display:block;width:100%;text-align:right;border:0;background:none;padding:11px;border-radius:10px;color:var(--ink)}
+    .menu button:hover{background:#f8f1fb}
+    .hidden{display:none!important}
+    .search{position:relative;margin:10px 0}
+    .search input{width:100%;padding:14px 44px 14px 14px;border:1px solid var(--line);border-radius:16px;background:#fff;outline:none}
+    .search span{position:absolute;right:15px;top:13px;color:var(--muted)}
+    .add-main{width:100%;border:0;border-radius:16px;background:linear-gradient(135deg,var(--primary2),var(--primary));color:#fff;padding:15px;font-weight:800;font-size:16px;box-shadow:0 8px 20px rgba(90,43,138,.22)}
+    .chips{display:flex;gap:8px;overflow-x:auto;padding:12px 0 5px;scrollbar-width:none}
+    .chip{white-space:nowrap;border:1px solid var(--line);background:#fff;color:var(--muted);padding:8px 13px;border-radius:999px}
+    .chip.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+    .group{margin-top:18px}
+    .group-head{display:flex;justify-content:space-between;align-items:center;border:0;background:transparent;width:100%;padding:3px 4px 10px;color:var(--ink);font-weight:900;font-size:17px}
+    .group-list{display:grid;gap:10px}
+    .item{border:1px solid rgba(0,0,0,.055);border-radius:18px;padding:13px;background:var(--tint,#fff);box-shadow:0 4px 14px rgba(49,28,56,.055)}
+    .item-row{display:flex;align-items:center;gap:11px}
+    .cat-dot{width:38px;height:38px;border-radius:13px;background:var(--cat,#eee);display:grid;place-items:center;font-weight:900;color:#55345d;flex:0 0 auto}
+    .item-main{min-width:0;flex:1}
+    .item-title{font-weight:900;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .item-meta{font-size:13px;color:var(--muted);margin-top:4px}
+    .item-meta.danger{color:var(--danger);font-weight:700}
+    .item-meta.success{color:var(--success);font-weight:700}
+    .done-btn{border:0;background:var(--primary);color:#fff;border-radius:12px;padding:10px 11px;font-size:13px;font-weight:800;white-space:nowrap}
+    .show-more{width:100%;border:0;background:transparent;color:var(--primary);padding:10px;font-weight:700}
+    .empty{text-align:center;padding:55px 20px;color:var(--muted)}
+    .empty b{display:block;color:var(--ink);font-size:20px;margin-bottom:14px}
+    .overlay{position:fixed;inset:0;background:rgba(41,26,51,.34);backdrop-filter:blur(3px);z-index:50;display:grid;place-items:end center}
+    .sheet{width:min(760px,100%);max-height:92vh;overflow:auto;background:#fffafc;border-radius:24px 24px 0 0;padding:18px 16px calc(22px + env(safe-area-inset-bottom));box-shadow:0 -10px 40px rgba(50,25,65,.18)}
+    .sheet-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+    .sheet h2{margin:0;font-size:21px;color:#44246c}
+    .icon-btn{border:0;background:#f4ebf8;color:var(--primary);width:40px;height:40px;border-radius:13px;font-size:20px}
+    .field{margin:13px 0}
+    .field label{display:block;font-size:13px;font-weight:800;margin-bottom:6px;color:#5f5365}
+    .field input,.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:14px;background:#fff;padding:13px;outline:none}
+    textarea{min-height:88px;resize:vertical}
+    .radio-row{display:flex;gap:9px;flex-wrap:wrap}
+    .radio-card{flex:1;min-width:140px;border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff}
+    .primary{width:100%;border:0;border-radius:15px;background:var(--primary);color:#fff;padding:14px;font-weight:900;margin-top:8px}
+    .secondary{width:100%;border:1px solid var(--primary);border-radius:15px;background:#fff;color:var(--primary);padding:13px;font-weight:800;margin-top:9px}
+    .danger-btn{width:100%;border:1px solid #f0cbd2;border-radius:15px;background:#fff4f5;color:var(--danger);padding:13px;font-weight:800;margin-top:9px}
+    .detail-hero{padding:18px;border-radius:20px;background:linear-gradient(145deg,#ffe8e6,#fff7f7);text-align:center;margin-bottom:14px}
+    .detail-hero h3{font-size:22px;margin:5px}
+    .stats{background:#fff;border:1px solid var(--line);border-radius:17px;padding:4px 14px}
+    .stat{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid #f1e8ef}
+    .stat:last-child{border-bottom:0}
+    .note{background:#fff;border:1px solid var(--line);border-radius:16px;padding:13px;margin-top:13px}
+    .suggest{background:#f5ecff;border:1px solid #dfc9f5;border-radius:16px;padding:14px;margin-top:13px;text-align:center}
+    .history{margin-top:17px}
+    .history-entry{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid #eee5ed}
+    .thumb{width:48px;height:48px;border-radius:11px;object-fit:cover;background:#eee}
+    .small-actions button{border:0;background:#f5eef7;border-radius:9px;padding:7px;margin-right:3px}
+    .toast{position:fixed;bottom:calc(18px + env(safe-area-inset-bottom));right:50%;transform:translateX(50%);background:#e9f8ec;color:#176c39;border:1px solid #bde2c6;padding:13px 17px;border-radius:15px;box-shadow:var(--shadow);z-index:100;font-weight:800}
+    .toast button{border:0;background:none;color:#176c39;text-decoration:underline;font-weight:800;margin-right:10px}
+    .categories-row{display:grid;grid-template-columns:1fr auto auto auto auto;gap:7px;align-items:center;padding:9px;border-bottom:1px solid #eee}
+    .color{width:24px;height:24px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #ddd}
+    .mini{border:0;background:#f3edf5;border-radius:9px;padding:8px}
+    .photo-preview{width:100px;height:100px;border-radius:14px;object-fit:cover;margin-top:8px}
+    @media (max-width:420px){
+      h1{font-size:22px}.brand img{width:48px;height:48px}.done-btn{padding:9px 8px}
+      .item{padding:11px}.cat-dot{width:34px;height:34px}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><img src="icon-180.png" alt=""><h1>מתי עשיתי את זה?!</h1></div>
+    <button class="dots" id="menuBtn" aria-label="תפריט">⋮</button>
+    <div class="menu hidden" id="menu">
+      <button data-action="backup">☁️ גיבוי</button>
+      <button data-action="restore">↥ שחזור</button>
+      <button data-action="categories">◉ ניהול קטגוריות</button>
+    </div>
+  </header>
+
+  <div class="search"><span>⌕</span><input id="search" placeholder="חיפוש בשם, בקטגוריה או בהערות"></div>
+  <button class="add-main" id="addBtn">＋ הוספת דבר חדש</button>
+  <div class="chips" id="chips"></div>
+  <main id="groups"></main>
+</div>
+
+<input id="restoreInput" type="file" accept=".json,application/json" hidden>
+
+<div class="overlay hidden" id="overlay"><section class="sheet" id="sheet"></section></div>
+<div class="toast hidden" id="toast"></div>
+
+<script>
+const COLORS=["#facbd3","#ffd982","#bfe4ba","#d8c2f1","#b7d5f4","#f3c7a8","#c4e4df","#e8c7df"];
+const DEFAULT_CATS=[
+ {id:"me",name:"אני",color:"#facbd3",order:0},
+ {id:"kids",name:"ילדים",color:"#ffd982",order:1},
+ {id:"home",name:"בית",color:"#bfe4ba",order:2},
+ {id:"cats",name:"חתולים",color:"#d8c2f1",order:3},
+ {id:"car",name:"רכב",color:"#b7d5f4",order:4}
+];
+let db, state={items:[],cats:[],filter:"all",search:"",expanded:{late:true,soon:true,later:false,none:false},showAll:{}};
+let undoAction=null;
+
+function uid(){return crypto.randomUUID?crypto.randomUUID():Date.now()+"-"+Math.random()}
+function esc(s=""){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function dateISO(d=new Date()){const z=new Date(d.getTime()-d.getTimezoneOffset()*60000);return z.toISOString().slice(0,10)}
+function parseDate(s){return new Date(s+"T12:00:00")}
+function fmt(s){if(!s)return "—";const d=parseDate(s);return `${d.getDate()}.${d.getMonth()+1}.${String(d.getFullYear()).slice(-2)}`}
+function daysBetween(a,b){return Math.round((parseDate(b)-parseDate(a))/86400000)}
+function addInterval(date,n,unit){
+  const d=parseDate(date);
+  if(unit==="days")d.setDate(d.getDate()+n);
+  if(unit==="weeks")d.setDate(d.getDate()+n*7);
+  if(unit==="months")d.setMonth(d.getMonth()+n);
+  if(unit==="years")d.setFullYear(d.getFullYear()+n);
+  return dateISO(d);
+}
+function unitHe(u,n){return u==="days"?"ימים":u==="weeks"?"שבועות":u==="months"?"חודשים":"שנים"}
+function rgba(hex,a=.16){let h=hex.replace("#","");if(h.length===3)h=h.split("").map(x=>x+x).join("");const n=parseInt(h,16);return `rgba(${n>>16},${(n>>8)&255},${n&255},${a})`}
+
+function openDB(){
+ return new Promise((res,rej)=>{
+  const r=indexedDB.open("mataiAsitiDB",1);
+  r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains("data"))d.createObjectStore("data")};
+  r.onsuccess=()=>{db=r.result;res()};r.onerror=()=>rej(r.error);
+ });
+}
+function getData(key){return new Promise((res,rej)=>{const r=db.transaction("data").objectStore("data").get(key);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+function setData(key,val){return new Promise((res,rej)=>{const r=db.transaction("data","readwrite").objectStore("data").put(val,key);r.onsuccess=()=>res();r.onerror=()=>rej(r.error)})}
+async function save(){await setData("items",state.items);await setData("cats",state.cats)}
+async function init(){
+ await openDB();
+ state.items=(await getData("items"))||[];
+ state.cats=(await getData("cats"))||structuredClone(DEFAULT_CATS);
+ render();
+ if("serviceWorker" in navigator)navigator.serviceWorker.register("./sw.js").catch(()=>{});
+}
+
+function latest(item){return [...(item.history||[])].sort((a,b)=>b.date.localeCompare(a.date))[0]}
+function nextDate(item){
+ const l=latest(item); if(!l)return null;
+ if(item.targetDate)return item.targetDate;
+ if(item.frequency&&!item.paused)return addInterval(l.date,+item.frequency.n,item.frequency.unit);
+ return null;
+}
+function soonWindow(freq){
+ if(!freq)return 0;
+ const approx=freq.unit==="days"?freq.n:freq.unit==="weeks"?freq.n*7:freq.unit==="months"?freq.n*30:freq.n*365;
+ return approx<=10?2:approx<=45?7:approx<=180?14:21;
+}
+function status(item){
+ const l=latest(item), next=nextDate(item), today=dateISO();
+ if(item.paused)return {group:"none",text:"מושהה",cls:""};
+ if(!next){
+   const passed=l?daysBetween(l.date,today):0;
+   return {group:"none",text:l?`עשיתי לאחרונה: ${fmt(l.date)} · עברו ${passed} ימים`:"בלי רישומים",cls:""};
+ }
+ const diff=daysBetween(today,next);
+ if(diff<0)return {group:"late",text:`${fmt(next)} · באיחור של ${Math.abs(diff)} ימים`,cls:"danger"};
+ if(diff===0)return {group:"soon",text:"היום",cls:"success"};
+ if(diff<=soonWindow(item.frequency))return {group:"soon",text:`${fmt(next)} · בעוד ${diff} ימים`,cls:"success"};
+ return {group:"later",text:`${fmt(next)} · בעוד ${diff} ימים`,cls:""};
+}
+function catOf(id){return state.cats.find(c=>c.id===id)||{name:"ללא קטגוריה",color:"#ddd"}}
+
+function render(){
+ const chips=document.getElementById("chips");
+ chips.innerHTML=[{id:"all",name:"הכול"},...state.cats.sort((a,b)=>a.order-b.order)].map(c=>`<button class="chip ${state.filter===c.id?"active":""}" data-filter="${c.id}">${esc(c.name)}</button>`).join("")+
+ `<button class="chip ${state.filter==="paused"?"active":""}" data-filter="paused">מושהים</button>`;
+ chips.querySelectorAll("button").forEach(b=>b.onclick=()=>{state.filter=b.dataset.filter;render()});
+ const q=state.search.trim().toLowerCase();
+ let items=state.items.filter(i=>{
+   if(state.filter==="paused"&&!i.paused)return false;
+   if(state.filter!=="all"&&state.filter!=="paused"&&i.categoryId!==state.filter)return false;
+   if(!q)return true;
+   const cat=catOf(i.categoryId).name;
+   const hist=(i.history||[]).map(h=>h.note||"").join(" ");
+   return `${i.name} ${cat} ${i.generalNote||""} ${hist}`.toLowerCase().includes(q);
+ });
+ const gs={late:[],soon:[],later:[],none:[]};
+ items.forEach(i=>gs[status(i).group].push(i));
+ gs.late.sort((a,b)=>nextDate(a).localeCompare(nextDate(b)));
+ gs.soon.sort((a,b)=>{const ad=nextDate(a),bd=nextDate(b);return ad===bd?a.name.localeCompare(b.name,"he"):ad.localeCompare(bd)});
+ gs.later.sort((a,b)=>nextDate(a).localeCompare(nextDate(b)));
+ gs.none.sort((a,b)=>(latest(a)?.date||"").localeCompare(latest(b)?.date||""));
+ const labels={late:"באיחור",soon:"בקרוב",later:"בהמשך",none:"בלי תדירות"};
+ const out=[];
+ for(const key of ["late","soon","later","none"]){
+   if(!gs[key].length)continue;
+   const open=state.expanded[key];
+   const shown=open?(state.showAll[key]?gs[key]:gs[key].slice(0,5)):[];
+   out.push(`<section class="group"><button class="group-head" data-toggle="${key}"><span>${labels[key]} (${gs[key].length})</span><span>${open?"⌄":"‹"}</span></button>
+   <div class="group-list">${shown.map(cardHTML).join("")}</div>
+   ${open&&gs[key].length>5?`<button class="show-more" data-more="${key}">${state.showAll[key]?"הצגת פחות":`הצגת הכול (${gs[key].length})`}</button>`:""}</section>`);
+ }
+ document.getElementById("groups").innerHTML=out.length?out.join(""):`<div class="empty"><b>ריק פה… מה עשית לאחרונה?</b><button class="add-main" onclick="openAdd()">＋ הוספת דבר חדש</button></div>`;
+ document.querySelectorAll("[data-toggle]").forEach(b=>b.onclick=()=>{const k=b.dataset.toggle;state.expanded[k]=!state.expanded[k];render()});
+ document.querySelectorAll("[data-more]").forEach(b=>b.onclick=()=>{state.showAll[b.dataset.more]=!state.showAll[b.dataset.more];render()});
+ document.querySelectorAll("[data-item]").forEach(b=>b.onclick=()=>openDetail(b.dataset.item));
+ document.querySelectorAll("[data-done]").forEach(b=>b.onclick=e=>{e.stopPropagation();openDone(b.dataset.done)});
+}
+function cardHTML(i){
+ const c=catOf(i.categoryId),s=status(i);
+ return `<article class="item" data-item="${i.id}" style="--tint:${rgba(c.color,.20)};--cat:${c.color}">
+ <div class="item-row"><div class="cat-dot">${esc(c.name.slice(0,1))}</div><div class="item-main">
+ <div class="item-title">${esc(i.name)} ${i.paused?'<small>· מושהה</small>':""}</div>
+ <div class="item-meta ${s.cls}">${esc(s.text)}</div></div>
+ <button class="done-btn" data-done="${i.id}">עשיתי עכשיו</button></div></article>`;
+}
+
+function openSheet(html){document.getElementById("sheet").innerHTML=html;document.getElementById("overlay").classList.remove("hidden")}
+function closeSheet(){document.getElementById("overlay").classList.add("hidden")}
+document.getElementById("overlay").onclick=e=>{if(e.target.id==="overlay")closeSheet()};
+
+function catsOptions(sel){return state.cats.sort((a,b)=>a.order-b.order).map(c=>`<option value="${c.id}" ${c.id===sel?"selected":""}>${esc(c.name)}</option>`).join("")}
+
+function openAdd(){
+ openSheet(`<div class="sheet-head"><h2>דבר חדש</h2><button class="icon-btn" onclick="closeSheet()">×</button></div>
+ <form id="addForm">
+ <div class="field"><label>שם</label><input name="name" required placeholder="למשל: צביעת שיער"></div>
+ <div class="field"><label>קטגוריה</label><select name="cat">${catsOptions(state.cats[0]?.id)}</select></div>
+ <div class="field"><label>תאריך שעשיתי</label><input type="date" name="date" value="${dateISO()}" required></div>
+ <button type="button" class="secondary" id="freqToggle">＋ הוספת תדירות או יעד</button>
+ <div id="freqArea" class="hidden">
+  <div class="radio-row field">
+   <label class="radio-card"><input type="radio" name="mode" value="freq" checked> תדירות קבועה</label>
+   <label class="radio-card"><input type="radio" name="mode" value="target"> תאריך יעד מדויק</label>
+  </div>
+  <div id="freqFields" class="field"><label>כל כמה זמן?</label><div style="display:flex;gap:8px"><input type="number" name="n" min="1" value="30"><select name="unit"><option value="days">ימים</option><option value="weeks">שבועות</option><option value="months">חודשים</option><option value="years">שנים</option></select></div></div>
+  <div id="targetFields" class="field hidden"><label>מתי בפעם הבאה?</label><input type="date" name="target"></div>
+ </div>
+ <button class="primary">שמירה</button></form>`);
+ const area=document.getElementById("freqArea");
+ document.getElementById("freqToggle").onclick=()=>area.classList.toggle("hidden");
+ document.querySelectorAll('input[name="mode"]').forEach(r=>r.onchange=()=>{
+  document.getElementById("freqFields").classList.toggle("hidden",r.value!=="freq");
+  document.getElementById("targetFields").classList.toggle("hidden",r.value!=="target");
+ });
+ document.getElementById("addForm").onsubmit=async e=>{
+  e.preventDefault();const f=new FormData(e.target),name=f.get("name").trim();
+  const dup=state.items.find(i=>i.name.trim().toLowerCase()===name.toLowerCase());
+  if(dup&&!confirm(`כבר קיים פריט בשם הזה בקטגוריית "${catOf(dup.categoryId).name}". לשמור בכל זאת?`))return;
+  const item={id:uid(),name,categoryId:f.get("cat"),generalNote:"",paused:false,history:[{id:uid(),date:f.get("date"),note:"",image:null}]};
+  if(!area.classList.contains("hidden")){
+   if(f.get("mode")==="freq")item.frequency={n:+f.get("n"),unit:f.get("unit")};
+   else if(f.get("target"))item.targetDate=f.get("target");
+  }
+  state.items.push(item);await save();closeSheet();render();toast("נשמר ✓");
+ };
+}
+
+function openDone(id){
+ const i=state.items.find(x=>x.id===id); if(!i)return;
+ openSheet(`<div class="sheet-head"><h2>עשיתי עכשיו</h2><button class="icon-btn" onclick="closeSheet()">×</button></div>
+ <form id="doneForm"><div class="field"><label>תאריך</label><input type="date" name="date" value="${dateISO()}" required></div>
+ <div class="field"><label>הערה (אופציונלית)</label><textarea name="note" placeholder="הוסיפי הערה קצרה…"></textarea></div>
+ <div class="field"><label>תמונה אחת (אופציונלית)</label><input type="file" id="photo" accept="image/*"><img id="preview" class="photo-preview hidden"></div>
+ <button class="primary" name="quick" value="1">שמירה מהירה</button><button class="secondary">שמירה</button></form>`);
+ let imageData=null;
+ document.getElementById("photo").onchange=async e=>{if(e.target.files[0]){imageData=await compressImage(e.target.files[0]);const p=document.getElementById("preview");p.src=imageData;p.classList.remove("hidden")}};
+ document.getElementById("doneForm").onsubmit=async e=>{
+  e.preventDefault();const f=new FormData(e.target),d=f.get("date");
+  if((i.history||[]).some(h=>h.date===d)&&!confirm("כבר סימנת שעשית את זה בתאריך הזה. להוסיף רישום נוסף?"))return;
+  const before=structuredClone(i);
+  i.history.push({id:uid(),date:d,note:f.get("note"),image:imageData});
+  if(i.targetDate)i.targetDate=null;
+  await save();closeSheet();render();
+  undoAction=async()=>{Object.assign(i,before);await save();render()};
+  toast("נשמר ✓",true);
+ };
+}
+async function compressImage(file){
+ const bmp=await createImageBitmap(file);const max=800,scale=Math.min(1,max/Math.max(bmp.width,bmp.height));
+ const c=document.createElement("canvas");c.width=Math.round(bmp.width*scale);c.height=Math.round(bmp.height*scale);
+ c.getContext("2d").drawImage(bmp,0,0,c.width,c.height);
+ return c.toDataURL("image/webp",.78);
+}
+
+function openDetail(id){
+ const i=state.items.find(x=>x.id===id);if(!i)return;
+ const c=catOf(i.categoryId),l=latest(i),n=nextDate(i),passed=l?daysBetween(l.date,dateISO()):0;
+ const hist=[...(i.history||[])].sort((a,b)=>b.date.localeCompare(a.date));
+ let suggestion="";
+ if(!i.frequency&&hist.length>=3){
+  const asc=[...hist].sort((a,b)=>a.date.localeCompare(b.date));
+  let sum=0;for(let x=1;x<asc.length;x++)sum+=daysBetween(asc[x-1].date,asc[x].date);
+  const avg=Math.round(sum/(asc.length-1));
+  suggestion=`<div class="suggest">נראה שאת עושה את זה בערך כל <b>${avg} ימים</b><br><button class="secondary" onclick="setSuggested('${i.id}',${avg})">הגדירי כתדירות</button></div>`;
+ } else if(!i.frequency&&hist.length<3) suggestion=`<div class="suggest">אחרי 3 רישומים נוכל להציע תדירות</div>`;
+ openSheet(`<div class="sheet-head"><h2>${esc(i.name)}</h2><button class="icon-btn" onclick="closeSheet()">×</button></div>
+ <div class="detail-hero" style="background:${rgba(c.color,.28)}"><div>${esc(c.name)}</div><h3>${esc(i.name)}</h3></div>
+ <div class="stats">
+  <div class="stat"><span>עשיתי לאחרונה</span><b>${fmt(l?.date)}</b></div>
+  <div class="stat"><span>עברו</span><b>${l?passed+" ימים":"—"}</b></div>
+  <div class="stat"><span>הפעם הבאה</span><b>${n?`${fmt(n)} · ${daysBetween(dateISO(),n)>=0?"בעוד "+daysBetween(dateISO(),n)+" ימים":"באיחור"}`:"—"}</b></div>
+  <div class="stat"><span>קטגוריה</span><button class="mini" onclick="editField('${i.id}','category')">${esc(c.name)} ✎</button></div>
+  <div class="stat"><span>תדירות</span><button class="mini" onclick="editField('${i.id}','frequency')">${i.frequency?`כל ${i.frequency.n} ${unitHe(i.frequency.unit,i.frequency.n)}`:"ללא"} ✎</button></div>
+ </div>
+ <button class="primary" onclick="openDone('${i.id}')">עשיתי עכשיו</button>
+ <div class="note"><b>הערה כללית</b><p>${esc(i.generalNote||"אין הערה")}</p><button class="mini" onclick="editField('${i.id}','note')">עריכה</button></div>
+ ${suggestion}
+ <div class="history"><h3>היסטוריה (${hist.length})</h3>${hist.map(h=>`<div class="history-entry">${h.image?`<img class="thumb" src="${h.image}" onclick="viewPhoto('${i.id}','${h.id}')">`:"<span></span>"}<div><b>${fmt(h.date)}</b><div>${esc(h.note||"—")}</div></div><div class="small-actions"><button onclick="editHistory('${i.id}','${h.id}')">✎</button><button onclick="deleteHistory('${i.id}','${h.id}')">🗑</button></div></div>`).join("")}</div>
+ <button class="secondary" onclick="togglePause('${i.id}')">${i.paused?"הפעלת תדירות מחדש":"השהיית תדירות"}</button>
+ <button class="danger-btn" onclick="deleteItem('${i.id}')">מחיקת הפריט</button>`);
+}
+async function setSuggested(id,avg){const i=state.items.find(x=>x.id===id);i.frequency={n:avg,unit:"days"};await save();openDetail(id);render()}
+async function togglePause(id){const i=state.items.find(x=>x.id===id);i.paused=!i.paused;await save();openDetail(id);render()}
+function editField(id,type){
+ const i=state.items.find(x=>x.id===id);
+ let body="";
+ if(type==="category")body=`<div class="field"><label>קטגוריה</label><select id="editVal">${catsOptions(i.categoryId)}</select></div>`;
+ if(type==="note")body=`<div class="field"><label>הערה כללית</label><textarea id="editVal">${esc(i.generalNote||"")}</textarea></div>`;
+ if(type==="frequency")body=`<div class="field"><label>כל כמה זמן?</label><div style="display:flex;gap:8px"><input id="freqN" type="number" min="1" value="${i.frequency?.n||30}"><select id="freqUnit"><option value="days">ימים</option><option value="weeks">שבועות</option><option value="months">חודשים</option><option value="years">שנים</option></select></div></div><div class="field"><label>או תאריך יעד מדויק</label><input id="targetDate" type="date" value="${i.targetDate||""}"></div>`;
+ openSheet(`<div class="sheet-head"><h2>עריכה</h2><button class="icon-btn" onclick="openDetail('${id}')">×</button></div>${body}<button class="primary" id="saveEdit">שמירה</button>`);
+ if(type==="frequency"&&i.frequency)document.getElementById("freqUnit").value=i.frequency.unit;
+ document.getElementById("saveEdit").onclick=async()=>{
+  if(type==="category")i.categoryId=document.getElementById("editVal").value;
+  if(type==="note")i.generalNote=document.getElementById("editVal").value;
+  if(type==="frequency"){
+   const target=document.getElementById("targetDate").value;
+   if(target){
+    const l=latest(i);const gap=l?Math.max(1,daysBetween(l.date,target)):null;
+    if(gap&&confirm(`התדירות תשתנה לכל ${gap} ימים. לעדכן?`)){i.frequency={n:gap,unit:"days"};i.targetDate=target}
+   }else{
+    i.frequency={n:+document.getElementById("freqN").value,unit:document.getElementById("freqUnit").value};
+    i.targetDate=null;
+   }
+  }
+  await save();render();openDetail(id);
+ };
+}
+function editHistory(itemId,hid){
+ const i=state.items.find(x=>x.id===itemId),h=i.history.find(x=>x.id===hid);
+ openSheet(`<div class="sheet-head"><h2>עריכת רישום</h2><button class="icon-btn" onclick="openDetail('${itemId}')">×</button></div>
+ <div class="field"><label>תאריך</label><input id="hDate" type="date" value="${h.date}"></div>
+ <div class="field"><label>הערה</label><textarea id="hNote">${esc(h.note||"")}</textarea></div>
+ <button class="primary" id="saveH">שמירה</button>`);
+ document.getElementById("saveH").onclick=async()=>{h.date=document.getElementById("hDate").value;h.note=document.getElementById("hNote").value;await save();render();openDetail(itemId)};
+}
+async function deleteHistory(itemId,hid){
+ if(!confirm("למחוק את הרישום הזה?"))return;
+ const i=state.items.find(x=>x.id===itemId);i.history=i.history.filter(h=>h.id!==hid);await save();render();openDetail(itemId);
+}
+function viewPhoto(itemId,hid){
+ const i=state.items.find(x=>x.id===itemId),h=i.history.find(x=>x.id===hid);
+ openSheet(`<div class="sheet-head"><h2>${fmt(h.date)}</h2><button class="icon-btn" onclick="openDetail('${itemId}')">×</button></div><img src="${h.image}" style="width:100%;border-radius:18px"><p>${esc(h.note||"")}</p>`);
+}
+async function deleteItem(id){
+ if(!confirm("למחוק את הפריט ואת כל ההיסטוריה והתמונות שלו?"))return;
+ const idx=state.items.findIndex(x=>x.id===id),removed=state.items[idx];
+ state.items.splice(idx,1);await save();closeSheet();render();
+ undoAction=async()=>{state.items.splice(idx,0,removed);await save();render()};
+ toast("הפריט נמחק",true);
+}
+
+function toast(msg,undo=false){
+ const t=document.getElementById("toast");t.innerHTML=esc(msg)+(undo?` <button id="undoBtn">ביטול</button>`:"");t.classList.remove("hidden");
+ if(undo)document.getElementById("undoBtn").onclick=async()=>{if(undoAction)await undoAction();undoAction=null;t.classList.add("hidden")};
+ clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.add("hidden"),4500);
+}
+
+function openCategories(){
+ openSheet(`<div class="sheet-head"><h2>ניהול קטגוריות</h2><button class="icon-btn" onclick="closeSheet()">×</button></div>
+ <button class="secondary" id="newCat">＋ הוספת קטגוריה</button><div id="catRows">${state.cats.sort((a,b)=>a.order-b.order).map((c,idx)=>`
+ <div class="categories-row"><span>${esc(c.name)}</span><span class="color" style="background:${c.color}"></span>
+ <button class="mini" onclick="moveCat('${c.id}',-1)">↑</button><button class="mini" onclick="moveCat('${c.id}',1)">↓</button><button class="mini" onclick="editCat('${c.id}')">✎</button><button class="mini" onclick="deleteCat('${c.id}')">🗑</button></div>`).join("")}</div>`);
+ document.getElementById("newCat").onclick=()=>editCat();
+}
+function editCat(id){
+ const c=id?state.cats.find(x=>x.id===id):null;
+ openSheet(`<div class="sheet-head"><h2>${c?"עריכת":"הוספת"} קטגוריה</h2><button class="icon-btn" onclick="openCategories()">×</button></div>
+ <div class="field"><label>שם</label><input id="catName" value="${esc(c?.name||"")}"></div>
+ <div class="field"><label>צבע</label><div class="radio-row">${COLORS.map(x=>`<label class="radio-card" style="min-width:60px"><input type="radio" name="catColor" value="${x}" ${x===(c?.color||COLORS[0])?"checked":""}><span class="color" style="display:inline-block;background:${x}"></span></label>`).join("")}</div></div>
+ <button class="primary" id="saveCat">שמירה</button>`);
+ document.getElementById("saveCat").onclick=async()=>{
+  const name=document.getElementById("catName").value.trim(),color=document.querySelector('[name="catColor"]:checked').value;if(!name)return;
+  const used=state.cats.find(x=>x.color===color&&x.id!==id);
+  if(used&&!confirm(`הצבע הזה כבר משויך לקטגוריית "${used.name}". להשתמש בו בכל זאת?`))return;
+  if(c){c.name=name;c.color=color}else state.cats.push({id:uid(),name,color,order:state.cats.length});
+  await save();render();openCategories();
+ };
+}
+async function moveCat(id,dir){const arr=state.cats.sort((a,b)=>a.order-b.order),idx=arr.findIndex(c=>c.id===id),j=idx+dir;if(j<0||j>=arr.length)return;[arr[idx],arr[j]]=[arr[j],arr[idx]];arr.forEach((c,k)=>c.order=k);await save();render();openCategories()}
+async function deleteCat(id){
+ const c=state.cats.find(x=>x.id===id),used=state.items.filter(i=>i.categoryId===id);
+ if(used.length){
+  const others=state.cats.filter(x=>x.id!==id);if(!others.length)return alert("אי אפשר למחוק את הקטגוריה היחידה.");
+  const target=prompt(`יש ${used.length} פריטים בקטגוריה. הקלידי את שם הקטגוריה שאליה להעביר:\n${others.map(x=>x.name).join(", ")}`);
+  const tc=others.find(x=>x.name===target);if(!tc)return alert("לא נמצאה קטגוריה בשם הזה.");
+  used.forEach(i=>i.categoryId=tc.id);
+ }
+ if(!confirm(`למחוק את הקטגוריה "${c.name}"?`))return;
+ state.cats=state.cats.filter(x=>x.id!==id);await save();render();openCategories();
+}
+
+async function backup(){
+ const data={app:"מתי עשיתי את זה?!",version:1,createdAt:new Date().toISOString(),items:state.items,categories:state.cats};
+ const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+ const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`matai-asiti-backup-${dateISO()}.json`;a.click();URL.revokeObjectURL(a.href);toast("הגיבוי נשמר ✓");
+}
+document.getElementById("restoreInput").onchange=async e=>{
+ try{
+  const data=JSON.parse(await e.target.files[0].text());
+  if(!data.items||!data.categories)throw Error();
+  if(!confirm("השחזור יחליף את כל הנתונים הקיימים. להמשיך?"))return;
+  state.items=data.items;state.cats=data.categories;await save();render();toast("השחזור הושלם ✓");
+ }catch{alert("קובץ הגיבוי אינו תקין.")}
+ e.target.value="";
+};
+
+document.getElementById("addBtn").onclick=openAdd;
+document.getElementById("search").oninput=e=>{state.search=e.target.value;render()};
+document.getElementById("menuBtn").onclick=e=>{e.stopPropagation();document.getElementById("menu").classList.toggle("hidden")};
+document.addEventListener("click",()=>document.getElementById("menu").classList.add("hidden"));
+document.getElementById("menu").onclick=e=>{
+ e.stopPropagation();const a=e.target.dataset.action;
+ if(a==="backup")backup();if(a==="restore")document.getElementById("restoreInput").click();if(a==="categories")openCategories();
+ document.getElementById("menu").classList.add("hidden");
+};
+init();
+</script>
+</body>
+</html>
