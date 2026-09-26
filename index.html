@@ -3,98 +3,21 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#5a2b8a">
+  <meta name="theme-color" content="#6b4795">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="מתי עשיתי?">
   <link rel="apple-touch-icon" href="icon-180.png">
   <link rel="manifest" href="manifest.webmanifest">
   <title>מתי עשיתי את זה?!</title>
-  <style>
-    :root{
-      --bg:#fffaf7;--card:#fff;--ink:#2f2440;--muted:#81788b;--primary:#5a2b8a;
-      --primary2:#7040a8;--line:#eadfe8;--danger:#c84f62;--success:#24844e;
-      --shadow:0 8px 28px rgba(65,38,74,.10);--r:20px;
-    }
-    *{box-sizing:border-box}
-    body{margin:0;background:linear-gradient(180deg,#fffaf7,#fff);color:var(--ink);
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;min-height:100vh}
-    button,input,select,textarea{font:inherit}
-    button{cursor:pointer}
-    .app{max-width:760px;margin:auto;padding:calc(18px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom))}
-    .top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
-    .brand{display:flex;align-items:center;gap:10px}
-    .brand img{width:54px;height:54px;border-radius:15px;box-shadow:0 5px 16px rgba(73,42,88,.16)}
-    h1{font-size:25px;margin:0;color:#3f2168;line-height:1.1}
-    .dots{width:42px;height:42px;border:0;background:#fff;border-radius:14px;color:var(--primary);font-size:24px;box-shadow:var(--shadow)}
-    .menu{position:absolute;left:14px;top:78px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:8px;box-shadow:var(--shadow);z-index:20;min-width:180px}
-    .menu button{display:block;width:100%;text-align:right;border:0;background:none;padding:11px;border-radius:10px;color:var(--ink)}
-    .menu button:hover{background:#f8f1fb}
-    .hidden{display:none!important}
-    .search{position:relative;margin:10px 0}
-    .search input{width:100%;padding:14px 44px 14px 14px;border:1px solid var(--line);border-radius:16px;background:#fff;outline:none}
-    .search span{position:absolute;right:15px;top:13px;color:var(--muted)}
-    .add-main{width:100%;border:0;border-radius:16px;background:linear-gradient(135deg,var(--primary2),var(--primary));color:#fff;padding:15px;font-weight:800;font-size:16px;box-shadow:0 8px 20px rgba(90,43,138,.22)}
-    .chips{display:flex;gap:8px;overflow-x:auto;padding:12px 0 5px;scrollbar-width:none}
-    .chip{white-space:nowrap;border:1px solid var(--line);background:#fff;color:var(--muted);padding:8px 13px;border-radius:999px}
-    .chip.active{background:var(--primary);color:#fff;border-color:var(--primary)}
-    .group{margin-top:18px}
-    .group-head{display:flex;justify-content:space-between;align-items:center;border:0;background:transparent;width:100%;padding:3px 4px 10px;color:var(--ink);font-weight:900;font-size:17px}
-    .group-list{display:grid;gap:10px}
-    .item{border:1px solid rgba(0,0,0,.055);border-radius:18px;padding:13px;background:var(--tint,#fff);box-shadow:0 4px 14px rgba(49,28,56,.055)}
-    .item-row{display:flex;align-items:center;gap:11px}
-    .cat-dot{width:38px;height:38px;border-radius:13px;background:var(--cat,#eee);display:grid;place-items:center;font-weight:900;color:#55345d;flex:0 0 auto}
-    .item-main{min-width:0;flex:1}
-    .item-title{font-weight:900;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .item-meta{font-size:13px;color:var(--muted);margin-top:4px}
-    .item-meta.danger{color:var(--danger);font-weight:700}
-    .item-meta.success{color:var(--success);font-weight:700}
-    .done-btn{border:0;background:var(--primary);color:#fff;border-radius:12px;padding:10px 11px;font-size:13px;font-weight:800;white-space:nowrap}
-    .show-more{width:100%;border:0;background:transparent;color:var(--primary);padding:10px;font-weight:700}
-    .empty{text-align:center;padding:55px 20px;color:var(--muted)}
-    .empty b{display:block;color:var(--ink);font-size:20px;margin-bottom:14px}
-    .overlay{position:fixed;inset:0;background:rgba(41,26,51,.34);backdrop-filter:blur(3px);z-index:50;display:grid;place-items:end center}
-    .sheet{width:min(760px,100%);max-height:92vh;overflow:auto;background:#fffafc;border-radius:24px 24px 0 0;padding:18px 16px calc(22px + env(safe-area-inset-bottom));box-shadow:0 -10px 40px rgba(50,25,65,.18)}
-    .sheet-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
-    .sheet h2{margin:0;font-size:21px;color:#44246c}
-    .icon-btn{border:0;background:#f4ebf8;color:var(--primary);width:40px;height:40px;border-radius:13px;font-size:20px}
-    .field{margin:13px 0}
-    .field label{display:block;font-size:13px;font-weight:800;margin-bottom:6px;color:#5f5365}
-    .field input,.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:14px;background:#fff;padding:13px;outline:none}
-    textarea{min-height:88px;resize:vertical}
-    .radio-row{display:flex;gap:9px;flex-wrap:wrap}
-    .radio-card{flex:1;min-width:140px;border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff}
-    .primary{width:100%;border:0;border-radius:15px;background:var(--primary);color:#fff;padding:14px;font-weight:900;margin-top:8px}
-    .secondary{width:100%;border:1px solid var(--primary);border-radius:15px;background:#fff;color:var(--primary);padding:13px;font-weight:800;margin-top:9px}
-    .danger-btn{width:100%;border:1px solid #f0cbd2;border-radius:15px;background:#fff4f5;color:var(--danger);padding:13px;font-weight:800;margin-top:9px}
-    .detail-hero{padding:18px;border-radius:20px;background:linear-gradient(145deg,#ffe8e6,#fff7f7);text-align:center;margin-bottom:14px}
-    .detail-hero h3{font-size:22px;margin:5px}
-    .stats{background:#fff;border:1px solid var(--line);border-radius:17px;padding:4px 14px}
-    .stat{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid #f1e8ef}
-    .stat:last-child{border-bottom:0}
-    .note{background:#fff;border:1px solid var(--line);border-radius:16px;padding:13px;margin-top:13px}
-    .suggest{background:#f5ecff;border:1px solid #dfc9f5;border-radius:16px;padding:14px;margin-top:13px;text-align:center}
-    .history{margin-top:17px}
-    .history-entry{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid #eee5ed}
-    .thumb{width:48px;height:48px;border-radius:11px;object-fit:cover;background:#eee}
-    .small-actions button{border:0;background:#f5eef7;border-radius:9px;padding:7px;margin-right:3px}
-    .toast{position:fixed;bottom:calc(18px + env(safe-area-inset-bottom));right:50%;transform:translateX(50%);background:#e9f8ec;color:#176c39;border:1px solid #bde2c6;padding:13px 17px;border-radius:15px;box-shadow:var(--shadow);z-index:100;font-weight:800}
-    .toast button{border:0;background:none;color:#176c39;text-decoration:underline;font-weight:800;margin-right:10px}
-    .categories-row{display:grid;grid-template-columns:1fr auto auto auto auto;gap:7px;align-items:center;padding:9px;border-bottom:1px solid #eee}
-    .color{width:24px;height:24px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #ddd}
-    .mini{border:0;background:#f3edf5;border-radius:9px;padding:8px}
-    .photo-preview{width:100px;height:100px;border-radius:14px;object-fit:cover;margin-top:8px}
-    @media (max-width:420px){
-      h1{font-size:22px}.brand img{width:48px;height:48px}.done-btn{padding:9px 8px}
-      .item{padding:11px}.cat-dot{width:34px;height:34px}
-    }
-  </style>
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="app">
   <header class="top">
-    <div class="brand"><img src="icon-180.png" alt=""><h1>מתי עשיתי את זה?!</h1></div>
-    <button class="dots" id="menuBtn" aria-label="תפריט">⋮</button>
+    <div class="brand"><img src="icon-180.png" width="56" height="56" alt=""><div><h1>מתי עשיתי את זה?!</h1><p>הדברים הקטנים, במקום אחד.</p></div></div>
+    <button class="dots" id="menuBtn" aria-label="תפריט" aria-expanded="false" aria-controls="menu">⋮</button>
     <div class="menu hidden" id="menu">
       <button data-action="backup">☁️ גיבוי</button>
       <button data-action="restore">↥ שחזור</button>
@@ -102,16 +25,16 @@
     </div>
   </header>
 
-  <div class="search"><span>⌕</span><input id="search" placeholder="חיפוש בשם, בקטגוריה או בהערות"></div>
-  <button class="add-main" id="addBtn">＋ הוספת דבר חדש</button>
-  <div class="chips" id="chips"></div>
+  <div class="search"><span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg></span><input id="search" type="search" aria-label="חיפוש בשם, בקטגוריה או בהערות" placeholder="חיפוש בשם, בקטגוריה או בהערות"></div>
+  <button class="add-main" id="addBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>הוספת דבר חדש</button>
+  <nav class="chips" id="chips" aria-label="סינון לפי קטגוריה"></nav>
   <main id="groups"></main>
 </div>
 
 <input id="restoreInput" type="file" accept=".json,application/json" hidden>
 
-<div class="overlay hidden" id="overlay"><section class="sheet" id="sheet"></section></div>
-<div class="toast hidden" id="toast"></div>
+<div class="overlay hidden" id="overlay"><section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" tabindex="-1"></section></div>
+<div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
 
 <script>
 const COLORS=["#facbd3","#ffd982","#bfe4ba","#d8c2f1","#b7d5f4","#f3c7a8","#c4e4df","#e8c7df"];
@@ -189,8 +112,8 @@ function catOf(id){return state.cats.find(c=>c.id===id)||{name:"ללא קטגו�
 
 function render(){
  const chips=document.getElementById("chips");
- chips.innerHTML=[{id:"all",name:"הכול"},...state.cats.sort((a,b)=>a.order-b.order)].map(c=>`<button class="chip ${state.filter===c.id?"active":""}" data-filter="${c.id}">${esc(c.name)}</button>`).join("")+
- `<button class="chip ${state.filter==="paused"?"active":""}" data-filter="paused">מושהים</button>`;
+ chips.innerHTML=[{id:"all",name:"הכול"},...state.cats.sort((a,b)=>a.order-b.order)].map(c=>`<button class="chip ${state.filter===c.id?"active":""}" data-filter="${c.id}" aria-pressed="${state.filter===c.id}">${c.color?`<span class="chip-dot" style="--cat:${c.color}" aria-hidden="true"></span>`:""}${esc(c.name)}</button>`).join("")+
+ `<button class="chip ${state.filter==="paused"?"active":""}" data-filter="paused" aria-pressed="${state.filter==="paused"}">מושהים</button>`;
  chips.querySelectorAll("button").forEach(b=>b.onclick=()=>{state.filter=b.dataset.filter;render()});
  const q=state.search.trim().toLowerCase();
  let items=state.items.filter(i=>{
@@ -213,11 +136,11 @@ function render(){
    if(!gs[key].length)continue;
    const open=state.expanded[key];
    const shown=open?(state.showAll[key]?gs[key]:gs[key].slice(0,5)):[];
-   out.push(`<section class="group"><button class="group-head" data-toggle="${key}"><span>${labels[key]} (${gs[key].length})</span><span>${open?"⌄":"‹"}</span></button>
-   <div class="group-list">${shown.map(cardHTML).join("")}</div>
+   out.push(`<section class="group" data-status="${key}"><button class="group-head" data-toggle="${key}" aria-expanded="${open}" aria-controls="list-${key}"><span class="group-label">${labels[key]} <span class="group-count">${gs[key].length}</span></span><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+   <div class="group-list" id="list-${key}">${shown.map(cardHTML).join("")}</div>
    ${open&&gs[key].length>5?`<button class="show-more" data-more="${key}">${state.showAll[key]?"הצגת פחות":`הצגת הכול (${gs[key].length})`}</button>`:""}</section>`);
  }
- document.getElementById("groups").innerHTML=out.length?out.join(""):`<div class="empty"><b>ריק פה… מה עשית לאחרונה?</b><button class="add-main" onclick="openAdd()">＋ הוספת דבר חדש</button></div>`;
+ document.getElementById("groups").innerHTML=out.length?out.join(""):`<div class="empty"><img src="icon-180.png" width="78" height="78" alt=""><b>${q?"לא מצאנו משהו מתאים":state.items.length?"עוד אין כאן דברים":"אז… מה עשית לאחרונה?"}</b><p>${q?"נסי שם אחר, קטגוריה או מילה מתוך ההערות.":state.items.length?"אפשר להוסיף דבר חדש לקטגוריה הזו.":"השקית את העציצים? החלפת מצעים? הוסיפי כאן, ובפעם הבאה תדעי בדיוק."}</p>${q?"":`<button class="secondary" onclick="openAdd()">＋ ${state.items.length?"הוספת דבר חדש":"הוספת דבר ראשון"}</button>`}</div>`;
  document.querySelectorAll("[data-toggle]").forEach(b=>b.onclick=()=>{const k=b.dataset.toggle;state.expanded[k]=!state.expanded[k];render()});
  document.querySelectorAll("[data-more]").forEach(b=>b.onclick=()=>{state.showAll[b.dataset.more]=!state.showAll[b.dataset.more];render()});
  document.querySelectorAll("[data-item]").forEach(b=>b.onclick=()=>openDetail(b.dataset.item));
@@ -225,16 +148,41 @@ function render(){
 }
 function cardHTML(i){
  const c=catOf(i.categoryId),s=status(i);
- return `<article class="item" data-item="${i.id}" style="--tint:${rgba(c.color,.20)};--cat:${c.color}">
- <div class="item-row"><div class="cat-dot">${esc(c.name.slice(0,1))}</div><div class="item-main">
+ return `<article class="item" style="--tint:${rgba(c.color,.42)};--cat:${c.color}">
+ <div class="item-row"><div class="cat-dot" aria-hidden="true">${esc(c.name.slice(0,1))}</div><button class="item-main" data-item="${i.id}" aria-label="פרטים על ${esc(i.name)}">
  <div class="item-title">${esc(i.name)} ${i.paused?'<small>· מושהה</small>':""}</div>
- <div class="item-meta ${s.cls}">${esc(s.text)}</div></div>
- <button class="done-btn" data-done="${i.id}">עשיתי עכשיו</button></div></article>`;
+ <div class="item-meta ${s.cls}">${esc(s.text)}</div></button>
+ <button class="done-btn" data-done="${i.id}" aria-label="עשיתי עכשיו: ${esc(i.name)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>עשיתי עכשיו</button></div></article>`;
 }
 
-function openSheet(html){document.getElementById("sheet").innerHTML=html;document.getElementById("overlay").classList.remove("hidden")}
-function closeSheet(){document.getElementById("overlay").classList.add("hidden")}
+let sheetTrigger=null;
+function openSheet(html){
+ const sheet=document.getElementById("sheet");
+ if(document.getElementById("overlay").classList.contains("hidden"))sheetTrigger=document.activeElement;
+ sheet.innerHTML=html;
+ const heading=sheet.querySelector("h2");if(heading)heading.id="sheetTitle";
+ sheet.querySelectorAll(".icon-btn").forEach(b=>b.setAttribute("aria-label","סגירה"));
+ sheet.querySelectorAll(".field").forEach((field,index)=>{
+  const label=field.querySelector("label"),control=field.querySelector("input:not([type=radio]),select,textarea");
+  if(label&&control){if(!control.id)control.id=`sheet-field-${index}`;label.htmlFor=control.id}
+ });
+ document.getElementById("overlay").classList.remove("hidden");
+ document.body.classList.add("sheet-open");sheet.scrollTop=0;sheet.focus({preventScroll:true});
+}
+function closeSheet(){
+ document.getElementById("overlay").classList.add("hidden");
+ document.body.classList.remove("sheet-open");
+ (sheetTrigger?.isConnected?sheetTrigger:document.getElementById("addBtn")).focus({preventScroll:true});
+}
 document.getElementById("overlay").onclick=e=>{if(e.target.id==="overlay")closeSheet()};
+document.addEventListener("keydown",e=>{
+ if(e.key==="Escape"){closeMenu();if(!document.getElementById("overlay").classList.contains("hidden"))closeSheet()}
+ if(e.key!=="Tab"||document.getElementById("overlay").classList.contains("hidden"))return;
+ const sheet=document.getElementById("sheet"),controls=[...sheet.querySelectorAll("button,input,select,textarea,[tabindex='0']")].filter(el=>!el.disabled&&el.getClientRects().length);
+ const first=controls[0],last=controls[controls.length-1];if(!first){e.preventDefault();return}
+ if(e.shiftKey&&(document.activeElement===first||document.activeElement===sheet)){e.preventDefault();last.focus()}
+ else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
+});
 
 function catsOptions(sel){return state.cats.sort((a,b)=>a.order-b.order).map(c=>`<option value="${c.id}" ${c.id===sel?"selected":""}>${esc(c.name)}</option>`).join("")}
 
@@ -250,7 +198,7 @@ function openAdd(){
    <label class="radio-card"><input type="radio" name="mode" value="freq" checked> תדירות קבועה</label>
    <label class="radio-card"><input type="radio" name="mode" value="target"> תאריך יעד מדויק</label>
   </div>
-  <div id="freqFields" class="field"><label>כל כמה זמן?</label><div style="display:flex;gap:8px"><input type="number" name="n" min="1" value="30"><select name="unit"><option value="days">ימים</option><option value="weeks">שבועות</option><option value="months">חודשים</option><option value="years">שנים</option></select></div></div>
+  <div id="freqFields" class="field"><label>כל כמה זמן?</label><div style="display:flex;gap:8px"><input type="number" name="n" min="1" value="30"><select name="unit" aria-label="יחידת זמן"><option value="days">ימים</option><option value="weeks">שבועות</option><option value="months">חודשים</option><option value="years">שנים</option></select></div></div>
   <div id="targetFields" class="field hidden"><label>מתי בפעם הבאה?</label><input type="date" name="target"></div>
  </div>
  <button class="primary">שמירה</button></form>`);
@@ -334,7 +282,7 @@ function editField(id,type){
  let body="";
  if(type==="category")body=`<div class="field"><label>קטגוריה</label><select id="editVal">${catsOptions(i.categoryId)}</select></div>`;
  if(type==="note")body=`<div class="field"><label>הערה כללית</label><textarea id="editVal">${esc(i.generalNote||"")}</textarea></div>`;
- if(type==="frequency")body=`<div class="field"><label>כל כמה זמן?</label><div style="display:flex;gap:8px"><input id="freqN" type="number" min="1" value="${i.frequency?.n||30}"><select id="freqUnit"><option value="days">ימים</option><option value="weeks">שבועות</option><option value="months">חודשים</option><option value="years">שנים</option></select></div></div><div class="field"><label>או תאריך יעד מדויק</label><input id="targetDate" type="date" value="${i.targetDate||""}"></div>`;
+ if(type==="frequency")body=`<div class="field"><label>כל כמה זמן?</label><div style="display:flex;gap:8px"><input id="freqN" type="number" min="1" value="${i.frequency?.n||30}"><select id="freqUnit" aria-label="יחידת זמן"><option value="days">ימים</option><option value="weeks">שבועות</option><option value="months">חודשים</option><option value="years">שנים</option></select></div></div><div class="field"><label>או תאריך יעד מדויק</label><input id="targetDate" type="date" value="${i.targetDate||""}"></div>`;
  openSheet(`<div class="sheet-head"><h2>עריכה</h2><button class="icon-btn" onclick="openDetail('${id}')">×</button></div>${body}<button class="primary" id="saveEdit">שמירה</button>`);
  if(type==="frequency"&&i.frequency)document.getElementById("freqUnit").value=i.frequency.unit;
  document.getElementById("saveEdit").onclick=async()=>{
@@ -434,12 +382,13 @@ document.getElementById("restoreInput").onchange=async e=>{
 
 document.getElementById("addBtn").onclick=openAdd;
 document.getElementById("search").oninput=e=>{state.search=e.target.value;render()};
-document.getElementById("menuBtn").onclick=e=>{e.stopPropagation();document.getElementById("menu").classList.toggle("hidden")};
-document.addEventListener("click",()=>document.getElementById("menu").classList.add("hidden"));
+function closeMenu(){document.getElementById("menu").classList.add("hidden");document.getElementById("menuBtn").setAttribute("aria-expanded","false")}
+document.getElementById("menuBtn").onclick=e=>{e.stopPropagation();const hidden=document.getElementById("menu").classList.toggle("hidden");e.currentTarget.setAttribute("aria-expanded",String(!hidden))};
+document.addEventListener("click",closeMenu);
 document.getElementById("menu").onclick=e=>{
  e.stopPropagation();const a=e.target.dataset.action;
  if(a==="backup")backup();if(a==="restore")document.getElementById("restoreInput").click();if(a==="categories")openCategories();
- document.getElementById("menu").classList.add("hidden");
+ closeMenu();
 };
 init();
 </script>

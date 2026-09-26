@@ -1,11 +1,11 @@
-const CACHE = "matai-asiti-v1";
-const ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./icon-180.png"];
+const CACHE = "matai-asiti-v2-design";
+const ASSETS = ["./", "./index.html", "./style.css", "./icon.svg", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./icon-180.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
   self.skipWaiting();
 });
 self.addEventListener("activate", e => {
-  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))));
+  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k.startsWith("matai-asiti-") && k !== CACHE).map(k => caches.delete(k)))));
   self.clients.claim();
 });
 self.addEventListener("fetch", e => {
